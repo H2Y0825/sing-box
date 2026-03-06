@@ -1,0 +1,19 @@
+name: Build Full Sing-box
+on: [workflow_dispatch] # 手動觸發
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+      - name: Build
+        run: |
+          go build -v -tags "with_quic,with_dhcp,with_wireguard,with_tailscale,with_utls,with_clash_api,with_gvisor" \
+          -trimpath -ldflags "-s -w" -o sing-box ./cmd/sing-box
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sing-box-linux-amd64
+          path: sing-box
